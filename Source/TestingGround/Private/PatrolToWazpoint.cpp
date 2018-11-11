@@ -5,15 +5,21 @@
 #include "BehaviorTree/BehaviorTreeComponent.h"
 #include "AIController.h"
 #include "PatrollingGuard.h"
+#include "PatrolRoute.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
 EBTNodeResult::Type UPatrolToWazpoint::ExecuteTask(UBehaviorTreeComponent& OwnerComponent, uint8* NodeMemory) {
 
-	AAIController* AIController = OwnerComponent.GetAIOwner();
-	APawn* ControlledPawn = AIController->GetPawn();
-	APatrollingGuard* PatrollingGuard = Cast <APatrollingGuard > (ControlledPawn);
-	TArray<AActor*> PatrolPoints = PatrollingGuard->WayPoints;
+	APawn* ControlledPawn = OwnerComponent.GetAIOwner()->GetPawn();
+	auto PatrolRoute = ControlledPawn->FindComponentByClass<UPatrolRoute>();
 
+	if (!ensure(PatrolRoute)) {return EBTNodeResult::Failed;}
+
+	auto PatrolPoints = PatrolRoute->GetPatrolPoints();
+	if (PatrolPoints.Num() == 0) {
+		UE_LOG(LogTemp, Warning, TEXT("Warning: Empty Patrol Route"))
+			return EBTNodeResult::Failed;
+	}
 
 	auto BlackboardComp = OwnerComponent.GetBlackboardComponent();
 	int Index = BlackboardComp->GetValueAsInt(IndexKey.SelectedKeyName);
@@ -21,7 +27,7 @@ EBTNodeResult::Type UPatrolToWazpoint::ExecuteTask(UBehaviorTreeComponent& Owner
 
 	auto NextIndex = (Index + 1) % PatrolPoints.Num();
 	BlackboardComp->SetValueAsInt(IndexKey.SelectedKeyName, NextIndex);
-	UE_LOG(LogTemp, Warning, TEXT("Next Index: %i"), NextIndex)
+	
 	return EBTNodeResult::Succeeded;
 	
 }

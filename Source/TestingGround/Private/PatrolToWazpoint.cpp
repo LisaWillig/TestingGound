@@ -4,7 +4,6 @@
 #include "PatrolToWazpoint.h"
 #include "BehaviorTree/BehaviorTreeComponent.h"
 #include "AIController.h"
-#include "PatrollingGuard.h"
 #include "PatrolRoute.h"
 #include "BehaviorTree/BlackboardComponent.h"
 

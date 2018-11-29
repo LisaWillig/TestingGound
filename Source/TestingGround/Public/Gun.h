@@ -33,18 +33,15 @@ class  AGun : public AActor
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 		class UMotionControllerComponent* L_MotionController;
 
-public:
-	// Sets default values for this actor's properties
-	AGun();
-
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	/** Fires a projectile. */
-	void OnFire();
 
 public:
+	// Sets default values for this actor's properties
+	AGun();
+
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
@@ -67,5 +64,8 @@ public:
 	/** Animation Instance of the character */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 		class UAnimInstance* AnimInstance;
+
+	/** Fires a projectile. */
+	void OnFire();
 
 };

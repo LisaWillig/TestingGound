@@ -45,9 +45,17 @@ void AFirstPersonCharacter::BeginPlay()
 	// Call the base class  
 	Super::BeginPlay();
 
+	if (GunBlueprint == NULL) {
+		return; }
+
+	Gun = GetWorld()->SpawnActor<AGun>(GunBlueprint);
 	// TODO Attach gun to character mesh component
 	//Attach gun mesh component to Skeleton, doing it here because the skeleton is not yet created in the constructor
-	//FP_Gun->AttachToComponent(Mesh1P, FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), TEXT("GripPoint"));
+	Gun->AttachToComponent(Mesh1P, FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), TEXT("GripPoint"));
+	Gun->AnimInstance = Mesh1P->GetAnimInstance();
+	if (EnableTouchscreenMovement(InputComponent) == false) {
+		InputComponent->BindAction("Fire", IE_Pressed, Gun, &AGun::OnFire);
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -64,7 +72,7 @@ void AFirstPersonCharacter::SetupPlayerInputComponent(class UInputComponent* Pla
 
 	// TODO Bind OnFire() from the Gun class
 	// Bind fire event
-	// PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &AFirstPersonCharacter::OnFire);
+	//PlayerInputComponent->BindAction("Fire", IE_Pressed, Gun, &AGun::OnFire);
 
 	// Enable touchscreen input
 	EnableTouchscreenMovement(PlayerInputComponent);
